@@ -1,15 +1,22 @@
-const { Client, Collection } = require("discord.js");
-const { loadEvents } = require("./Handlers/events")
-const colors = require("colors")
-require('dotenv').config();
+const { readdirSync } = require("node:fs");
 
-const client = new Client({ intents: 53608447 });
+module.exports = {
+	async loadSlash(client){
+		let GuardCmd = [];
 
-loadEvents(client);
+		for(const Carpeta of readdirSync(`./slashcommands`)){
+			for(const Comandos of readdirSync(`./slashcommands/${Carpeta}`).filter(file => file.endsWith('.js'))){
+				const commands = require(`../slashcommands/${Carpeta}/${Comandos}`);
+				client.slashcmd.set(commands.data.name, commands);
 
-client.slashcmd = new Collection();
+				GuardCmd.push(commands.data.toJSON());
+			}
+		}
+		client.application.commands.set(GuardCmd);
 
-client.login(process.env.TOKEN)
+		console.log(`[Bot] >> [${client.slashcmd.size}] Comandos Recargados`.green)
+	}
+}
 
 /*
 ╔╗─╔╗╔═══╗╔═╗─╔╗╔═══╗╔╗───╔═══╗╔═══╗     ╔═╗╔═╗╔══╗╔╗─╔╗

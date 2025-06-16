@@ -1,15 +1,24 @@
-const { Client, Collection } = require("discord.js");
-const { loadEvents } = require("./Handlers/events")
-const colors = require("colors")
-require('dotenv').config();
+const { readdirSync } = require("node:fs")
 
-const client = new Client({ intents: 53608447 });
+module.exports = {
+	async loadEvents(client){
 
-loadEvents(client);
+		for(const Carpeta of readdirSync(`./Eventos`)){
+			for(const Evento of readdirSync(`./Eventos/${Carpeta}`).filter(file => file.endsWith('.js'))){
 
-client.slashcmd = new Collection();
+				const evento = require(`../Eventos/${Carpeta}/${Evento}`)
 
-client.login(process.env.TOKEN)
+				if(evento.once) {
+					client.once(evento.name, (...args) => evento.execute(...args, client));
+				} else {
+					client.on(evento.name, (...args) => evento.execute(...args, client));
+				}
+			}
+		}
+
+		console.log("[Bot] >> Eventos Cargados.".yellow)
+	}
+}
 
 /*
 ╔╗─╔╗╔═══╗╔═╗─╔╗╔═══╗╔╗───╔═══╗╔═══╗     ╔═╗╔═╗╔══╗╔╗─╔╗

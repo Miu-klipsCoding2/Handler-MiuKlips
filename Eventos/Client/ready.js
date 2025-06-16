@@ -1,15 +1,16 @@
-const { Client, Collection } = require("discord.js");
-const { loadEvents } = require("./Handlers/events")
-const colors = require("colors")
-require('dotenv').config();
+const { loadSlash } = require("../../Handlers/slashcommands")
 
-const client = new Client({ intents: 53608447 });
+module.exports = {
+	name: "ready",
+	once: true,
 
-loadEvents(client);
+	async execute(interaction, client){
 
-client.slashcmd = new Collection();
+	console.log(`[Bot] >> Iniciamos como el bot ${client.user.tag}`.green);
 
-client.login(process.env.TOKEN)
+	loadSlash(client);
+	}
+}
 
 /*
 ╔╗─╔╗╔═══╗╔═╗─╔╗╔═══╗╔╗───╔═══╗╔═══╗     ╔═╗╔═╗╔══╗╔╗─╔╗

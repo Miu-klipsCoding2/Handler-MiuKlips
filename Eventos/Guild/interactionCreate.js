@@ -1,15 +1,17 @@
-const { Client, Collection } = require("discord.js");
-const { loadEvents } = require("./Handlers/events")
-const colors = require("colors")
-require('dotenv').config();
+module.exports = {
+	name: "interactionCreate",
 
-const client = new Client({ intents: 53608447 });
+	async execute(interaction, client){
 
-loadEvents(client);
+	if(interaction.isChatInputCommand()){
+		const cmd = client.slashcmd.get(interaction.commandName)
+		if(!cmd) return;
 
-client.slashcmd = new Collection();
-
-client.login(process.env.TOKEN)
+		await cmd.execute(interaction, client)
+	}
+	
+	}
+}
 
 /*
 ╔╗─╔╗╔═══╗╔═╗─╔╗╔═══╗╔╗───╔═══╗╔═══╗     ╔═╗╔═╗╔══╗╔╗─╔╗
